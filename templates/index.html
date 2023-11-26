@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Language Recognition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Noto+Sans:wght@200;300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../static/css/home.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="main_content">
+        <div class="left_side_menu">
+            <div class="button_content">
+                <button id="stop_camera_button">Wyłącz Kamerę</button>
+                <button id="start_camera_button">Włącz Kamerę</button>
+                <!-- <button id="clear_list_button">Wyczyść listę</button> -->
+            </div>
+            <div class="chart-box">
+                <canvas id="probabilityChart">
+                </canvas>
+                <div class="wordDiv lastWord"></div>
+            </div>
+        </div>
+        
+        <div class="camera_content">
+            <div class="title">
+                <h3>Rozpoznawanie gestów języka migowego z wykorzystaniem sieci neuronowej</h3>
+            </div>
+            <img id="camera_image" style="max-width: 100%;">
+        </div>
+        <!-- <p>Stan kamery: <span id="camera_status">{% if camera_active %}Włączona{% else %}Zatrzymana{% endif %}</span></p> -->
+    
+        <div class="sentence_content"></div>
+
+
+    </div>  
+    <script>
+        $(document).ready(function() {
+
+            var cameraImage = $("#camera_image");
+
+            var ctx = document.getElementById('probabilityChart').getContext('2d');
+            var probabilityChart;
+
+    
+            function updateCameraImage() {
+                cameraImage.attr("src", "{{ url_for('video_feed') }}?" + new Date().getTime());
+            }
+    
+    
+            $("#stop_camera_button").click(function() {
+                $.get("/stop_camera", function(response) {
+                    $("#camera_status").text("Zatrzymana");
+                });
+            });
+
+            $("#clear_list_button").click(function() {
+                    var sentenceContainer = $(".sentence_content");
+                    sentenceContainer.empty(); 
+
+      
+                    $.get("/clear_sequence", function(response) {
+                        console.log("Lista 'sequence' została wyczyszczona.");
+                    });
+            });
+    
+            $("#start_camera_button").click(function() {
+                $.get("/start_camera", function(response) {
+                    $("#camera_status").text("Włączona");
+                    updateCameraImage(); // Odśwież obraz kamery po uruchomieniu
+                });
+            });
+        });
+        function fetchSentence() {
+            $.ajax({
+                url: '/get_sentence',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    updateSentence(response.sentence);
+                },
+                complete: function() {
+                    // Ponowne pobieranie co pewien czas
+                    setTimeout(fetchSentence, 1); // Ustaw czas w milisekundach
+                }
+            });
+        }
+
+        function updateSentence(sentence) {
+            var divLastWord = $(".lastWord");
+            divLastWord.empty();
+            // Tworzymy tablicę wyrazów na podstawie łańcucha
+            var wordsArray = sentence.split(' ');
+
+            // Aktualizujemy HTML
+            var sentenceContainer = $(".sentence_content");
+            sentenceContainer.empty(); // Czyścimy zawartość
+
+            for (var i = 0; i < wordsArray.length; i++) {
+                var divElement = $("<div>").addClass("wordDiv");
+                var pElement = $("<p>").text(wordsArray[i]);
+                divElement.append(pElement);
+                sentenceContainer.append(divElement);
+            }
+
+            divLastWord.append( $("<p>").text(wordsArray[wordsArray.length-1]));
+        }
+
+
+        var charIsCreate = 0;        
+        function updateProbabilityChart(probabilities) {
+            var labels = ['hello', 'thankyou', 'love', 'friend', 'good', 'meet', 'you', 'think', 'bed', 'have'];
+
+            // Data for the chart
+            var data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Probability',
+                    data: probabilities,
+                    backgroundColor: 'rgba(255, 51, 153,1)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            console.log(probabilities)
+            
+            
+            var ctx = document.getElementById('probabilityChart').getContext('2d');
+
+            if(!charIsCreate) {
+                probabilityChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                            indexAxis: 'y',
+                            scales: {
+                                y: {
+                                    ticks: {
+                                        autoSkip: false,
+                                        maxRotation: 0,
+                                        minRotation: 0
+                                        }
+                                }
+                                }
+                        },
+
+
+                })
+                probabilityChart.rotation = 180;
+                probabilityChart.aspectRatio = 2;
+                charIsCreate = 1;
+                
+                
+
+
+                var containerWidth = $("#probabilityChart").parent().width();
+                probabilityChart.width = containerWidth;
+                probabilityChart.resize();
+            }
+
+    
+            probabilityChart.data.datasets[0].data = probabilities;
+            probabilityChart.update();
+            console.log("U{PPP}")
+            }
+
+    function fetchProbabilities() {
+        $.ajax({
+            url: '/get_probabilities',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                updateProbabilityChart(response.res);
+            },
+            complete: function() {
+                setTimeout(fetchProbabilities, 1);
+            }
+        });
+    }
+
+        fetchProbabilities();    
+        fetchSentence();
+    </script>
+
+</body>
+</html>

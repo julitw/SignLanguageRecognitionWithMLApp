@@ -1,0 +1,154 @@
+.main_content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.main_content::before {
+    content: "";
+    background-image: url('../images/back1.png');
+    opacity: 0.6; 
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.left_side_menu{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    height: 100vh;
+}
+.button_content{
+    display: flex;
+    /* flex-direction: column; */
+    align-items: start;
+    justify-content: center;
+    
+}
+.chart-box{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.camera_content{
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    margin-bottom: 20px;
+    background-color: rgba(255,255,255,0.7);
+}
+.sentence_content{
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+#start_camera_button {
+    background-color: white;
+    border: 5px solid  rgb(0, 189, 6); /* Green */
+    color:  rgb(0, 189, 6);
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 100px; 
+    height: 100px;
+    }
+
+
+#stop_camera_button {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50%; /* Ustawia zaokrąglone krawędzie, aby uzyskać efekt okrągłego przycisku */
+    text-decoration: none;
+    background-color: white;
+    border: 5px solid  rgb(11, 0, 158);/* Green */
+    color: rgb(11, 0, 158); /* Kolor tekstu na przycisku */
+    font-size: 15px;
+    cursor: pointer;
+    width: 100px; 
+    height: 100px;
+  }
+
+#clear_list_button{
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50%; 
+    text-decoration: none;
+    background-color: white;
+    border: 5px solid  rgba(255, 0, 111, 1);
+    color: rgba(255, 0, 111, 1);/* Kolor tekstu na przycisku */
+    font-size: 25px;
+    cursor: pointer;
+    width: 150px; 
+    height: 150px;
+}  
+
+.wordDiv {
+    width: 85px; 
+    height: 85px;
+    background-color: white;
+    border-radius: 50%; 
+    text-align: center;
+    margin-top: 3px;
+    line-height: 42.5px;
+    font-size: 18px;
+    border: 3px solid  rgb(255, 0, 157);
+    color: rgb(255, 0, 157); 
+
+}
+
+.sentence_content div:nth-child(odd){
+    border: 3px solid  rgb(0, 89, 10); 
+    color:  rgb(0, 89, 10);
+}
+
+.sentence_content div:nth-child(even){
+    border: 3px solid  rgb(255, 0, 157);
+    color: rgb(255, 0, 157); 
+}
+
+.sentence_content div:last-child{
+    width: 95px; 
+    height: 95px;
+    border-width: 6px;
+}
+.title{
+    font-family: 'Kanit', sans-serif;
+    background-color: rgba(255, 255, 255, 1);
+    margin-bottom: 5px;
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    padding: 10px 2px;
+}
+h3{
+    padding: 3px;
+    margin: 0
+}
+
+canvas {  
+    /* height: 500px !important; */
+    /* width: 300px !important; */
+    background-color: rgb(255, 255, 255);
+ }
+
+
+
